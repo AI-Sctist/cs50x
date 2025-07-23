@@ -1,0 +1,11 @@
+sort1 uses: bubble sort
+
+How do you know?: it's the remaining case
+
+sort2 uses: merge sort
+
+How do you know?: it takes the least time to sort the file reversed50000.txt
+
+sort3 uses: selection sort
+
+How do you know?: it takes the most time to sort the file sorted50000.txt
