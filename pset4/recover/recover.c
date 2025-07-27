@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     while (fread(buff, 1, 1, card) == 1)
     {
         if ((progress == 0 && *buff == 0xff) || (progress == 1 && *buff == 0xd8) ||
-            (progress == 2 && *buff == 0xff) || (progress == 3 && (*buff & 0xe0) == 0xe0))
+            (progress == 2 && *buff == 0xff) || (progress == 3 && (*buff & 0xf0) == 0xe0))
         {
             progress++;
         }
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 uint8_t JPEG_sign(uint8_t *buff)
 {
     return (*buff == 0xff && *(buff + 1) == 0xd8 && *(buff + 2) == 0xff &&
-            (*(buff + 3) & 0xe0) == 0xe0);
+            (*(buff + 3) & 0xf0) == 0xe0);
 }
 
 void start_writing(FILE *card)
