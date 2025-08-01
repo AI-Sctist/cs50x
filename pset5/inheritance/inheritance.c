@@ -15,8 +15,9 @@ typedef struct person
 const int GENERATIONS = 3;
 const int INDENT_LENGTH = 4;
 
-// Check if create_family() function successfully creates a full family or not
-bool COMPLETE_FAMILY = true;
+// Branch and bound: Check if a family is successfully create, early stop creating new
+// member if some branches are failed, but still keep the paths to free.
+bool SUCCESSFULL = true;
 
 person *create_family(int generations);
 void print_family(person *p, int generation);
@@ -28,79 +29,82 @@ int main(void)
     // Seed random number generator
     srandom(time(0));
 
+    if (GENERATIONS == 0)
+    {
+        printf("No generation for creating.\n");
+        return 1;
+    }
+
     // Create a new family with three generations
-    person *ptr = create_family(GENERATIONS);
+    person *p = create_family(GENERATIONS);
 
     // Print family tree of blood types
-    if (COMPLETE_FAMILY == true)
+    if (SUCCESSFULL)
     {
-        print_family(ptr, 0);
+        print_family(p, 0);
     }
     else
     {
-        printf("No generation created!\n");
+        printf("Create failed!\n");
     }
 
     // Free memory
-    free_family(ptr);
+    free_family(p);
 }
 
 // Create a new individual with `generations`
 person *create_family(int generations)
 {
-    // Branch and bound: My own implement
-    if (COMPLETE_FAMILY == false)
+    if (!SUCCESSFULL)
     {
-        return NULL;
-    }
-    if (generations == 0)
-    {
-        COMPLETE_FAMILY = false;
         return NULL;
     }
 
     // TODO: Allocate memory for new person
-    person *current = malloc(1 * sizeof(person));
-    if (current == NULL)
+    person *member = malloc(sizeof(person));
+    if (member == NULL)
     {
+        SUCCESSFULL = false;
         return NULL;
     }
 
     // If there are still generations left to create
-    else if (generations > 1)
+    if (generations > 1)
     {
         // Create two new parents for current person by recursively calling create_family
         person *parent0 = create_family(generations - 1);
         person *parent1 = create_family(generations - 1);
         if (parent0 == NULL || parent1 == NULL)
         {
-            COMPLETE_FAMILY = false;
-            return current;
+            SUCCESSFULL = false;
         }
 
         // TODO: Set parent pointers for current person
-        current->parents[0] = parent0;
-        current->parents[1] = parent1;
+        member->parents[0] = parent0;
+        member->parents[1] = parent1;
 
         // TODO: Randomly assign current person's alleles based on the alleles of their parents
-        current->alleles[0] = parent0->alleles[rand() % 2];
-        current->alleles[1] = parent1->alleles[rand() % 2];
+        if (SUCCESSFULL)
+        {
+            member->alleles[0] = parent0->alleles[rand() % 2];
+            member->alleles[1] = parent1->alleles[rand() % 2];
+        }
     }
 
     // If there are no generations left to create
     else
     {
         // TODO: Set parent pointers to NULL
-        current->parents[0] = NULL;
-        current->parents[1] = NULL;
+        member->parents[0] = NULL;
+        member->parents[1] = NULL;
 
         // TODO: Randomly assign alleles
-        current->alleles[0] = random_allele();
-        current->alleles[1] = random_allele();
+        member->alleles[0] = random_allele();
+        member->alleles[1] = random_allele();
     }
 
     // TODO: Return newly created person
-    return current;
+    return member;
 }
 
 // Free `p` and all ancestors of `p`.
