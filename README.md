@@ -10,4 +10,4 @@ https://cs50.harvard.edu/x/
 - Certificate of completion (upon finishing)
 
 ## Status
-In progress - learning at my own pace.
+On pause - until after university entrance exams
